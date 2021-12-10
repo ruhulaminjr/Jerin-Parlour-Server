@@ -20,7 +20,17 @@ app.use(express.json());
 async function run() {
   try {
     await client.connect();
-    console.log("db Connected Success");
+    const db = client.db("jerinsDb");
+    const servicesCollection = await db.collection("services");
+    app.post("/addservice", async (req, res) => {
+      const servicedata = req.body;
+      const added = await servicesCollection.insertOne(servicedata);
+      res.send(added);
+    });
+    app.get("/getservices", async (req, res) => {
+      const find = servicesCollection.find({});
+      res.json(await find.toArray());
+    });
   } finally {
   }
 }
